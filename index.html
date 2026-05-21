@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Portfolio de Groupe</title>
+    <style>
+        /* --- VARIABLES ET STYLE GLOBAL --- */
+        :root {
+            --bg-color: var(--card-bg);
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --accent-color: #4f46e5; /* Violet moderne */
+            --border-radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: aqua;
+            color: black ;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- BARRE DE RECHERCHE --- */
+        .search-container {
+            position: relative;
+            width: 110%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid transparent;
+            background-color: whitesmoke;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.1);
+        }
+
+        /* --- GRILLE DES MEMBRES --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 1rem;
+        }
+
+        .member-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Effet de survol sur les cartes */
+        .member-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 110%; /* Format vertical élégant */
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .member-card:hover .image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .member-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .member-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .member-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- PAGES DE DÉTAILS (MODALES) --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            width: 90%;
+            max-width: 750px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+
+        .close-button:hover {
+            background: #ffffff;
+            color: var(--accent-color);
+            transform: rotate(90deg);
+        }
+
+        /* Layout intérieur de la modale */
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 600px) {
+            .modal-body {
+                grid-template-columns: 40% 60%;
+            }
+        }
+
+        .modal-img-container {
+            background-color: #e9ecef;
+            min-height: 250px;
+        }
+
+        .modal-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-details {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-details h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-role {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 1rem; 
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-bio {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+        }
+
+        .personal-info-list {
+            list-style: none;
+            border-top: 1px solid #edf2f7;
+            padding-top: 1.5rem;
+        }
+
+        .personal-info-list li {
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .personal-info-list strong {
+            color: var(--text-color);
+            display: inline-block;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- ENTÊTE & RECHERCHE --- -->
+    <header>
+        <h1>Portefolio du Groupe</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un membre de l'équipe...">
+        </div>
+    </header>
+
+    <!-- --- GRILLE DE LA PAGE D'ACCUEIL --- -->
+    <main class="grid-container" id="gridContainer">
+        
+        <!-- Membre 1 -->
+        <div class="member-card" data-name="Membre Un" data-index="0">
+            <div class="image-wrapper">
+                <!-- Remplacez par le lien de votre photo -->
+                <img src="c:\Users\LeBonCoin\Documents\POrtefolio\1000501934.jpg" alt="Photo de Jude KISSAMA">
+            </div>
+            <div class="member-info">
+                <h3>Jude KISSAMA</h3>
+                <p>Développeur web</p>
+            </div>
+        </div>
+
+        <!-- Membre 2 -->
+        <div class="member-card" data-name="Membre Deux" data-index="1">
+            <div class="image-wrapper">
+                <img src="c:\Users\LeBonCoin\Downloads\jAELLE.jpeg" alt="Photo de Jaelle MONDZOLA">
+            </div>
+            <div class="member-info">
+                <h3>Jaelle MONDZOLA</h3>
+                <p>Developpeur web</p>
+            </div>
+        </div>
+
+        <!-- Membre 3 -->
+        <div class="member-card" data-name="Membre Trois" data-index="2">
+            <div class="image-wrapper">
+                <img src="c:\Users\LeBonCoin\Documents\POrtefolio\1000536665.jpg" alt="Photo de Vhan DI-AZEN">
+            </div>
+            <div class="member-info">
+                <h3>Vhan DI-AZEN</h3>
+                <p>Expert en intelligence artificielle</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- --- STRUCTURE DE LA FENÊTRE MODALE (DÉTAILS) --- -->
+    <div class="modal" id="memberModal">
+        <div class="modal-content">
+            <button class="close-button" id="closeModal">&times;</button>
+            <div class="modal-body">
+                <div class="modal-img-container">
+                    <img id="modalImg" src="c:\Users\LeBonCoin\Documents\POrtefolio\1000536665.jpg" alt="Photo menmbre de groupe">
+                </div>
+                <div class="modal-details">
+                    <h2 id="modalName">Jude KISSAMA</h2>
+                    <div class="modal-role" id="modalRole">Developpeur web</div>
+                    <p class="modal-bio" id="modalBio">Petit paragraphe de description...</p>
+                    
+                    <ul class="personal-info-list">
+                        <li><strong>Âge :</strong> <span id="modalAge">-</span></li>
+                        <li><strong>Email :</strong> <span id="modalEmail">-</span></li>
+                        <li><strong>Spécialité :</strong> <span id="modalSkill">-</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- --- LOGIQUE JAVASCRIPT --- -->
+    <script>
+        // 1. Base de données locale pour adapter facilement vos informations
+        const membersData = [
+            {
+                name: "Jude KISSAMA",
+                role: "Développeur Web",
+                image: "c:\Users\LeBonCoin\Documents\POrtefolio\1000501934.jpg",
+                bio: "Passionné par le code et et par tout ce qui touche un temps soit peu à l'informatique. Je me defini comme etant une personne ayant une personnalité complète, 1m90 pour 92kg, un corps athlètique pour ainsi dire. Je suis conscient que pour le moment je brille de par mon inexpèrience, mais je suis convaincu qu'on me donnant à 100% je deviendrai celui que je veux devenir",
+                age: "22 ans",
+                email: "kissamajude@gmail.com",
+                skill: "HTML, CSS, et un Peu de JavaScript"
+            },
+            {
+                name: "Jaelle MONDZOLA",
+                role: "Developpeur Web",
+                image: "c:\Users\LeBonCoin\Documents\POrtefolio\jAELLE.jpeg",
+                bio: "Créatif et soucieuse du détail.Mon but est de rendre l'expérience utilisateur unique, intuitive et visuellement mémorable à travers des interfaces modernes.",
+                age: "19 ans",
+                email: "laurejaelle@icloud.com",
+                skill: "HTML/CSS, Python, Java avancé"
+            },
+            {
+                name: "Vhan DI-AZEN",
+                role: "Expert en intelligence artificielle",
+                image: "c:\Users\LeBonCoin\Documents\POrtefolio\1000536665.jpg",
+                bio: "Organisé et excellent communiquant. Assure la liaison au sein de l'équipe, gère le calendrier des livrables et veille au respect de nos objectifs communs.",
+                age: "20 ans",
+                email: "diazenvhanchelsea@gmail.com",
+                skill: "Agile / Git / Stratégie"
+            }
+        ];
+
+        // Éléments du DOM
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.member-card');
+        const modal = document.getElementById('memberModal');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        // Éléments intérieurs de la modale
+        const memberName = document.getElementById('memberName');
+        const memberRole = document.getElementById('memberRole');
+        const memberImg = document.getElementById('memberImg');
+        const memberBio = document.getElementById('memberBio');
+        const memberAge = document.getElementById('memberAge');
+        const memberEmail = document.getElementById('memberEmail');
+        const memberSkill = document.getElementById('memberSkill');
+
+        /* --- SYSTÈME DE FILTRE / RECHERCHE --- */
+        searchInput.addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase().trim();
+            
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                if (name.includes(value)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        /* --- SYSTÈME D'OUVERTURE DE PAGE DÉTAILS --- */
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const index = card.getAttribute('data-index');
+                const data = membersData[index];
+
+                // Injection des données dans la modale
+                modalName.textContent = data.name;
+                modalRole.textContent = data.role;
+                modalImg.src = data.image;
+                modalImg.alt = `Portrait de ${data.name}`;
+                modalBio.textContent = data.bio;
+                modalAge.textContent = data.age;
+                modalEmail.textContent = data.email;
+                modalSkill.textContent = data.skill;
+
+                // Affichage de la modale avec transition
+                modal.classList.add('active');
+            });
+        });
+
+        /* --- FERMETURE DE LA MODALE --- */
+        const closeModal = () => {
+            modal.classList.remove('active');
+        };
+
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Ferme aussi si on clique à l'extérieur de la fiche blanche
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Ferme avec la touche Échap
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
